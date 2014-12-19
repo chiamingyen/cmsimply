@@ -1,14 +1,13 @@
 from javascript import JSConstructor
-from javascript import JSObject
 import math
  
-cango = JSConstructor(Cango2D)
-shapes2d = JSObject(shapes2D)
+cango = JSConstructor(window.Cango2D)
+shapes2d = window.shapes2D
 #tweener = JSConstructor(Tweener)
 #drag2d = JSConstructor(Drag2D)
 #svgtocgo2d = JSConstructor(svgToCgo2D)
 #involutebezcoeffs = JSConstructor(involuteBezCoeffs)
-creategeartooth = JSConstructor(createGearTooth)
+creategeartooth = JSConstructor(window.createGearTooth)
 #createintgeartooth= JSConstructor(createIntGearTooth)
 
 cgo = cango("plotarea")
@@ -55,7 +54,7 @@ gear = gearTooth.dup()
 for i in range(1, Zg):
     newTooth = gearTooth.dup()
     newTooth.rotate(360*i/Zg)
-    gear.appendPath(newTooth, true) # trim move command = true
+    gear.appendPath(newTooth, True) # trim move command = true
 
 # add axle hole
 Dsg = 0.6*Rg # diameter of gear shaft

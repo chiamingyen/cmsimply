@@ -8,8 +8,8 @@
 
 import math
 import time
-from browser import doc
-import browser.timer
+from browser import document as doc
+from browser import timer
 
 # 點類別
 class Point():
@@ -27,7 +27,7 @@ class Point():
         self.g.moveTo(self.x,self.y)
         self.g.beginPath()
         # 根據 r 半徑繪製一個圓代表點的所在位置
-        self.g.arc(self.x, self.y, self.r, 0, 2*math.pi, true)
+        self.g.arc(self.x, self.y, self.r, 0, 2*math.pi, True)
         self.g.moveTo(self.x,self.y)
         self.g.lineTo(self.x+self.r, self.y)
         self.g.moveTo(self.x, self.y)
@@ -165,21 +165,21 @@ class Link(Line):
         # 必須配合畫在 y 軸上的 Link, 進行座標轉換, 也可以改為畫在 x 軸上...
         self.g.beginPath()
         self.g.moveTo(0,0)
-        self.g.arc(0, 0, hole, 0, 2*math.pi, true)
+        self.g.arc(0, 0, hole, 0, 2*math.pi, True)
         self.g.stroke()
         self.g.moveTo(0,length)
         self.g.beginPath()
-        self.g.arc(0,length, hole, 0, 2*math.pi, true)
+        self.g.arc(0,length, hole, 0, 2*math.pi, True)
         self.g.stroke()
         self.g.moveTo(0,0)
         self.g.beginPath()
-        self.g.arc(0,0, radius, 0, math.pi, true)
+        self.g.arc(0,0, radius, 0, math.pi, True)
         self.g.moveTo(0+radius,0)
         self.g.lineTo(0+radius,0+length)
         self.g.stroke()
         self.g.moveTo(0,0+length)
         self.g.beginPath()
-        self.g.arc(0, 0+length, radius, math.pi, 0, true)
+        self.g.arc(0, 0+length, radius, math.pi, 0, True)
         self.g.moveTo(0-radius,0+length)
         self.g.lineTo(0-radius,0)
         self.g.stroke()
@@ -390,4 +390,4 @@ context = canvas.getContext("2d")
 
 #以間隔 10 micro seconds 重複呼叫 draw()
 #time.set_interval(draw,20)
-browser.timer.set_interval(draw,10)
+timer.set_interval(draw,10)

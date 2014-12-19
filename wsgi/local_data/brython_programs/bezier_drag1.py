@@ -1,11 +1,10 @@
 from javascript import JSConstructor
-from javascript import JSObject
  
-cango = JSConstructor(Cango2D)
-shapes2d = JSObject(shapes2D)
-tweener = JSConstructor(Tweener)
-drag2d = JSConstructor(Drag2D)
-svgtocgo2d = JSConstructor(svgToCgo2D)
+cango = JSConstructor(window.Cango2D)
+shapes2d = window.shapes2D
+tweener = JSConstructor(window.Tweener)
+drag2d = JSConstructor(window.Drag2D)
+svgtocgo2d = JSConstructor(window.svgToCgo2D)
 cgo = cango("plotarea")
 x1, y1 = 40, 20
 cx1, cy1 = 90, 120
@@ -62,13 +61,13 @@ cgo.clearCanvas("lightyellow")
 cgo.setWorldCoords(0, 0, 200)
 
 # pre-compile the draggable control point
-dragObj1 = drag2d(cgo, null, dragC1, null)
+dragObj1 = drag2d(cgo, None, dragC1, None)
 c1 = cgo.compileShape(shapes2d.circle, 'red', 'red', 4)
 c1.enableDrag(dragObj1)
-dragObj2 = drag2d(cgo, null, dragC2, null)
+dragObj2 = drag2d(cgo, None, dragC2, None)
 c2 = cgo.compileShape(shapes2d.circle, 'red', 'red', 4)
 c2.enableDrag(dragObj2)
-dragObj3 = drag2d(cgo, null, dragC3, null)
+dragObj3 = drag2d(cgo, None, dragC3, None)
 c3 = cgo.compileShape(shapes2d.circle, 'red', 'red', 4)
 c3.enableDrag(dragObj3)
 

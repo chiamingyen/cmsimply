@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Created by Leo (http://leoeditor.com/leo_toc.html) -->
+<!-- Created by Leo: http://leoeditor.com/leo_toc.html -->
 <?xml-stylesheet ekr_test?>
-<leo_file xmlns:leo="http://www.leo-editor.org/2011/leo" >
+<leo_file xmlns:leo="http://leoeditor.com/namespaces/leo-python-editor/1.1" >
 <leo_header file_format="2" tnodes="0" max_tnode_index="0" clone_windows="0"/>
 <globals body_outline_ratio="0.5" body_secondary_ratio="0.5">
 	<global_window_position top="50" left="50" height="500" width="700"/>
@@ -10,7 +10,7 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
-<v t="cmsxh.20131226100304.5349" a="E"><vh>@settings</vh>
+<v t="cmsxh.20131226100304.5349"><vh>@settings</vh>
 <v t="cmsxh.20131226100304.5350"><vh>@data qt-gui-plugin-style-sheet</vh></v>
 <v t="cmsxh.20131226100304.5351"><vh>@string initial_split_orientation = horizontal</vh></v>
 </v>
@@ -25,8 +25,16 @@
 <v t="2014pythonE.20140312072052.1942"><vh>about syntaxhighlight</vh></v>
 <v t="2014pythonE.20140424170033.3315"><vh>about duplicate heading</vh></v>
 <v t="2014pythonE.20140313091306.1898"><vh>Brython ajax</vh></v>
+<v t="2014fall.20141219135032.2091" a="E"><vh>Brython 3.0.1 修改</vh>
+<v t="2014fall.20141219135032.2092" a="E"><vh>變更</vh>
+<v t="2014fall.20141219135032.2093"><vh>Cango 程式改寫</vh></v>
+<v t="2014fall.20141219135032.2094"><vh>fourbar.js 呼叫改寫</vh></v>
+</v>
+<v t="2014fall.20141219135032.2095"><vh>新的 editor.py</vh></v>
+<v t="2014fall.20141219135032.2096"><vh>舊的 editor.py</vh></v>
+</v>
 <v t="2014spring.20140605210826.1877"><vh>errors</vh></v>
-<v t="2014pythonE.20140313212213.1898" a="E"><vh>CherryPy ajax example</vh>
+<v t="2014pythonE.20140313212213.1898"><vh>CherryPy ajax example</vh>
 <v t="2014pythonE.20140313212213.1899"><vh>another example</vh></v>
 <v t="2014pythonE.20140313212213.1902"><vh>reference site</vh></v>
 <v t="2014pythonE.20140313212213.1900" a="E"><vh>localStorage</vh>
@@ -34,7 +42,8 @@
 </v>
 </v>
 <v t="cmsxh.20140212132226.1610"><vh>Error</vh></v>
-<v t="2014pythonE.20140420143435.2016" a="E"><vh>OpenjsCAD 模型</vh>
+<v t="2015.20141008201544.1881"><vh>Extension</vh></v>
+<v t="2014pythonE.20140420143435.2016"><vh>OpenjsCAD 模型</vh>
 <v t="2014pythonE.20140420143435.2017"><vh>Dodecahedron</vh></v>
 <v t="2014pythonE.20140420143435.2018"><vh>axis coupler</vh></v>
 <v t="2014pythonE.20140420143435.2019"><vh>cubes</vh></v>
@@ -77,6 +86,517 @@ expanded="cmsxh.20131226100304.3682,cmsxh.20131226100304.3709,"><vh>@file applic
 </v>
 </vnodes>
 <tnodes>
+<t tx="2014fall.20141219135032.2091">&lt;script type="text/python3"&gt;
+from browser import document as doc
+from browser import html
+import header
+
+qs_lang,language = header.show('../')
+
+# other translations
+
+trans = {
+    'report_bugs':{'en':'Please report bugs in the ',
+                   'es':'Poner los bugs en el ',
+                   'fr':"Signalez les bugs dans l'"},
+    'test_page':{'en':'Tests page','es':'P&amp;aacute;gina de pruebas','fr':'Page de tests'},
+    'run':{'en':'run','es':'ejecutar','fr':'ex?cuter'},
+    'clear':{'en':'clear','es':'borrar','fr':'effacer'}
+}
+
+for key in trans:
+    if key in doc:
+        doc[key].html = trans[key].get(language,trans[key]['en'])
+
+# link to test page
+tplink = doc['test_page']
+if qs_lang:
+    tplink.href += '?lang=%s' %qs_lang
+
+def set_debug(ev):
+    if ev.target.checked:
+        __BRYTHON__.debug = 1
+    else:
+        __BRYTHON__.debug = 0
+
+__BRYTHON__.debug = int(doc['set_debug'].checked)
+
+# bindings
+doc['run_js'].bind('click', window.run_js)
+doc['set_debug'].bind('change',set_debug)
+
+# next functions are defined in editor.py
+doc['show_js'].bind('click',show_js)
+doc['run'].bind('click',run)
+doc['show_console'].bind('click',show_console)
+
+# erase "main" div
+def clear_main(ev):
+    doc['main'].text = ''
+
+main_content = 'Zone with id="main" ; use it to test interaction with DOM elements'
+
+# add "main" div
+def add_main(ev):
+    global main_content
+    try:
+        # if "main" div already exists, save content and erase container
+        main_content = doc["main"].html
+        doc["main_container"].html = ""
+        doc["add_main"].text = 'Show "main" div'
+    except KeyError:
+        t = html.TABLE()
+        row = html.TR()
+        b = html.BUTTON('Clear')
+        b.bind('click', clear_main)
+        row &lt;= html.TD(b)+html.TD(html.DIV(Id="main"))
+        t &lt;= row
+        doc["main_container"] &lt;= t
+        doc["main"].html = main_content
+        doc["add_main"].text = 'Hide "main" div'
+
+doc["add_main"].bind('click', add_main)
+
+&lt;/script&gt;
+
+&lt;script&gt;
+function run_js(){
+    var cons = document.getElementById("console")
+    var jscode = cons.value
+    var t0 = (new Date()).getTime()
+    eval(jscode)
+    var t1 = (new Date()).getTime()
+    console.log("Javascript code run in "+(t1-t0)+" ms")
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body onload="brython({debug:1, cache:'version'})"&gt;
+
+&lt;table id="banner" cellpadding=0 cellspacing=0&gt;
+&lt;tr id="banner_row"&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;div id="main_container"&gt;&lt;/div&gt;
+
+&lt;div style="text-align:center"&gt;Brython version: &lt;span id="version"&gt;&lt;/span&gt;
+&lt;/div&gt;
+&lt;/center&gt;
+
+&lt;div id="container"&gt;
+&lt;div id="left-div"&gt;
+&lt;div style="padding: 3px 3px 3px 3px;"&gt;
+&lt;button id="add_main"&gt;Add &lt;b&gt;&amp;lt;div id=main&amp;gt;&lt;/b&gt;&lt;/button&gt;
+
+&lt;/div&gt;
+  &lt;div id="editor" style="width:100%;"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="right-div"&gt;
+&lt;div style="padding: 3px 3px 3px 3px;"&gt;
+  &lt;div style="float:left"&gt;
+    &lt;button id="run"&gt; ▶ Run&lt;/button&gt;
+    &lt;button id="run_js"&gt; ▶ Run Javascript&lt;/button&gt;
+    Debug&lt;input type="checkbox" id="set_debug" checked&gt;
+  &lt;/div&gt;
+
+  &lt;div style="float:right"&gt;
+    &lt;button id="show_console"&gt;Python&lt;/button&gt;
+    &lt;button id="show_js"&gt;Javascript&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div style="width:100%;height:100%;"&gt;
+&lt;textarea id="console"&gt;&lt;/textarea&gt;
+&lt;/div&gt;
+&lt;/div&gt;</t>
+<t tx="2014fall.20141219135032.2092">更換新的 Brython 目錄
+更換新的 editor.py
+更換所有 ace.js 相關檔案
+在 run_js 前面加上  window.
+
+舊的用法, 使用 JSObject 改為 window 物件下直接引用
+#filename = JSObject(getradio)("filename")
+filename = window.getradio("filename")</t>
+<t tx="2014fall.20141219135032.2093">from javascript import JSConstructor
+from javascript import JSObject
+
+# JSObject 直接改為 window
+# JSConstructor 中的呼叫也要加上 window
+cango = JSConstructor(window.Cango2D)
+shapes2d = window.shapes2D
+tweener = JSConstructor(window.Tweener)
+cgo = cango("plotarea")
+
+rect = ["M", 0, 100, 500, 100, 500, 200, 0, 200, "z"]
+bkg = cgo.drawShape(rect, 0, 100,'red')
+tri = cgo.compileShape(shapes2d.triangle, 'black', 'black')
+tri.scale(300);
+hole = cgo.compileShape(shapes2d.circle, 'red', 'red')
+hole.scale(150)
+hole.revWinding()
+hole.translate(200, 200)
+tri.translate(200,200)
+tri.appendPath(hole)
+cgo.render(tri)</t>
+<t tx="2014fall.20141219135032.2094"># need yen_fourbar.js
+from javascript import JSConstructor
+import math
+from browser import doc
+import browser.timer
+ 
+# convert Javascript function object into Brython object
+point = JSConstructor(window.Point)
+line = JSConstructor(window.Line)
+link = JSConstructor(window.Link)
+triangle = JSConstructor(window.Triangle)
+ 
+def draw():
+    global theta
+    # clear canvas context
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    # draw linkeage
+    line1.drawMe(ctx)
+    line2.drawMe(ctx)
+    line3.drawMe(ctx)
+    # draw triangles
+    #triangle1.drawMe(ctx)
+    #triangle2.drawMe(ctx)
+    # input link rotation increment
+    theta += dx
+    # calculate new p2 position according to new theta angle
+    p2.x = p1.x + line1.length*math.cos(theta*degree)
+    p2.y = p1.y - line1.length*math.sin(theta*degree)
+    temp = triangle2.setPPSS(p2, p4, link3_len, link2_len)
+    p3.x = temp[0]
+    p3.y = temp[1]
+ 
+ 
+x, y, r = 10, 10, 10
+# define canvas and context
+canvas = doc["plotarea"]
+ctx = canvas.getContext("2d")
+# fourbar linkage inputs
+theta = 0
+degree = math.pi/180
+dx = 2
+dy = 4
+p1 = point(150, 100)
+p2 = point(150, 200)
+p3 = point(300, 300)
+p4 = point(350, 100)
+line1 = link(p1, p2)
+line2 = link(p2, p3)
+line3 = link(p3, p4)
+line4 = link(p1, p4)
+line5 = link(p2, p4)
+link2_len = p2.distance(p3)
+link3_len = p3.distance(p4)
+triangle1 = triangle(p1,p2,p4)
+triangle2 = triangle(p2,p3,p4)
+temp = []
+ctx.translate(0, canvas.height)
+ctx.scale(1, -1)
+browser.timer.set_interval(draw, 10)</t>
+<t tx="2014fall.20141219135032.2095">import sys
+import time
+import traceback
+import dis
+
+from browser import document as doc, window,alert
+from javascript import JSObject
+
+# set height of container to 66% of screen
+_height = doc.documentElement.clientHeight
+_s = doc['container']
+_s.style.height = '%spx' % int(_height*0.66)
+
+has_ace = True
+try:
+    editor = window.ace.edit("editor")
+    session = editor.getSession()
+    session.setMode("ace/mode/python")
+
+    editor.setOptions({
+     'width': '390px;',
+     'enableLiveAutocompletion': True,
+     'enableSnippets': True,
+     'highlightActiveLine': False,
+     'highlightSelectedWord': True
+    })
+except:
+    from browser import html
+    editor = html.TEXTAREA(rows=20,cols=70)
+    doc["editor"] &lt;= editor
+    def get_value(): return editor.value
+    def set_value(x):editor.value=x
+    editor.getValue = get_value
+    editor.setValue = set_value
+    has_ace = False
+
+if sys.has_local_storage:
+    from browser.local_storage import storage
+else:
+    storage = None
+
+if 'set_debug' in doc:
+    __BRYTHON__.debug = int(doc['set_debug'].checked)
+
+def reset_src():
+    if storage is not None and "py_src" in storage:
+       editor.setValue(storage["py_src"])
+    else:
+       editor.setValue('for i in range(10):\n\tprint(i)')
+
+    editor.scrollToRow(0)
+    editor.gotoLine(0)
+
+def reset_src_area():
+    if storage and "py_src" in storage:
+       editor.value = storage["py_src"]
+    else:
+       editor.value = 'for i in range(10):\n\tprint(i)'
+
+def write(data):
+    doc["console"].value += '%s' % data
+
+#sys.stdout = object()    #not needed when importing sys via src/Lib/sys.py
+sys.stdout.write = write
+
+#sys.stderr = object()    # ditto
+sys.stderr.write = write
+
+def to_str(xx):
+    return str(xx)
+
+info = sys.implementation.version
+doc['version'].text = '%s.%s.%s' %(info.major,info.minor,info.micro)
+
+output = ''
+
+def show_console(ev):
+    doc["console"].value = output
+    doc["console"].cols = 60
+
+def run(in_globals=False):
+    global output
+    doc["console"].value=''
+    src = editor.getValue()
+    if storage is not None:
+       storage["py_src"]=src
+
+    t0 = time.perf_counter()
+    try:
+        if(in_globals):
+            exec(src)
+        else:
+            ns = {}
+            exec(src,ns)
+        state = 1
+    except Exception as exc:
+        traceback.print_exc()
+        state = 0
+    output = doc["console"].value
+
+    print('&lt;completed in %6.2f ms&gt;' % ((time.perf_counter()-t0)*1000.0))
+    return state
+
+# load a Python script
+def load_script(evt):
+    _name=evt.target.value+'?foo=%s' %time.time()
+    editor.setValue(open(_name).read())
+
+def show_js(ev):
+    src = editor.getValue()
+    doc["console"].value = dis.dis(src)
+
+if has_ace:
+    reset_src()
+else:
+    reset_src_area()</t>
+<t tx="2014fall.20141219135032.2096"># -*- coding: utf-8 -*-
+import sys
+import time
+import dis
+import traceback
+
+from browser import document as doc
+from javascript import JSObject
+
+# set height of container to 66% of screen
+_height = doc.documentElement.clientHeight
+_s = doc['container']
+_s.style.height = '%spx' % int(_height*0.66)
+
+has_ace = True
+try:
+    editor=JSObject(ace).edit("editor")
+    editor.getSession().setMode("ace/mode/python")
+    editor.setTheme("ace/theme/monokai")
+except:
+    from browser import html
+    editor = html.TEXTAREA(rows=20,cols=70)
+    doc["editor"] &lt;= editor
+    def get_value(): return editor.value
+    def set_value(x):editor.value=x
+    editor.getValue = get_value
+    editor.setValue = set_value
+    has_ace = False
+
+if sys.has_local_storage:
+    from browser.local_storage import storage
+else:
+    storage = False
+
+def reset_src():
+    if storage and "py_src" in storage:
+       editor.setValue(storage["py_src"])
+    else:
+       editor.setValue('''#coding: utf-8
+# 猜數字遊戲
+import random
+ 
+標準答案 = random.randint(1, 100)
+你猜的數字 = int(input("請輸入您所猜的整數:"))
+猜測次數 = 1
+while 標準答案 != 你猜的數字:
+    if 標準答案 &lt; 你猜的數字:
+        print("太大了，再猜一次 :)加油")
+    else:
+        print("太小了，再猜一次 :)加油")
+    你猜的數字 = int(input("請輸入您所猜的整數:"))
+    猜測次數 += 1
+ 
+print("猜對了！總共猜了", 猜測次數, "次")
+''')
+
+    editor.scrollToRow(0)
+    editor.gotoLine(0)
+
+def reset_src_area():
+    if storage and "py_src" in storage:
+       editor.value = storage["py_src"]
+    else:
+        editor.value = '''#coding: utf-8
+# 猜數字遊戲
+import random
+ 
+標準答案 = random.randint(1, 100)
+你猜的數字 = int(input("請輸入您所猜的整數:"))
+猜測次數 = 1
+while 標準答案 != 你猜的數字:
+    if 標準答案 &lt; 你猜的數字:
+        print("太大了，再猜一次 :)加油")
+    else:
+        print("太小了，再猜一次 :)加油")
+    你猜的數字 = int(input("請輸入您所猜的整數:"))
+    猜測次數 += 1
+ 
+print("猜對了！總共猜了", 猜測次數, "次")
+'''
+
+def write(data):
+    doc["console"].value += str(data)
+
+#sys.stdout = object()    #not needed when importing sys via src/Lib/sys.py
+sys.stdout.write = write
+
+#sys.stderr = object()    # ditto
+sys.stderr.write = write
+
+def to_str(xx):
+    return str(xx)
+
+#info = sys.implementation.version
+#doc['version'].text = '%s.%s.%s' %(info.major,info.minor,info.micro)
+
+output = ''
+
+def show_console(ev):
+    doc["console"].value = output
+    doc["console"].cols = 60
+
+def clear_text(ev):
+    editor.setValue('')
+    if sys.has_local_storage:
+        storage["py_src"]=''
+
+    doc["console"].value=''
+
+def clear_src(ev):
+    editor.setValue('')
+    if sys.has_local_storage:
+        storage["py_src"]=''
+        
+def clear_canvas(ev):
+    canvas = doc["plotarea"]
+    ctx = canvas.getContext("2d")
+    # Store the current transformation matrix
+    ctx.save();
+    # Use the identity matrix while clearing the canvas
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    # Restore the transform
+    ctx.restore();
+    #ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+def clear_console(ev):
+    doc["console"].value=''
+
+def run(*args):
+    global output
+    doc["console"].value=''
+    src = editor.getValue()
+    if storage:
+       storage["py_src"]=src
+
+    t0 = time.perf_counter()
+    try:
+        exec(src,globals())
+        state = 1
+    except Exception as exc:
+        traceback.print_exc()
+        state = 0
+    output = doc["console"].value
+
+    print('&lt;completed in %6.2f ms&gt;' % ((time.perf_counter()-t0)*1000.0))
+    return state
+
+# load a Python script
+def load(evt):
+    _name=evt.target.value+'?foo=%s' %time.time()
+    editor.setValue(open(_name).read())
+
+def show_js(ev):
+    src = editor.getValue()
+    doc["console"].value = dis.dis(src)
+
+def change_theme(evt):
+    _theme=evt.target.value
+    editor.setTheme(_theme)
+
+    if storage:
+       storage["ace_theme"]=_theme
+doc["ace_theme"].bind("change",change_theme)
+
+def reset_theme():
+    if storage:
+       if "ace_theme" in storage:
+          editor.setTheme(storage["ace_theme"])
+          doc["ace_theme"].value=storage["ace_theme"]
+
+def reset_the_src(ev):
+    if has_ace:
+        reset_src()
+        reset_theme()
+    else:
+        reset_src_area()
+
+if has_ace:
+    reset_src()
+    reset_theme()
+else:
+    reset_src_area()
+</t>
 <t tx="2014pythonE.20140312072052.1942">At this moment, the syntaxhighlight cause the Brython error.
 When syntaxhighlight return anything but None, error arises.
 
@@ -2027,6 +2547,7 @@ We need custom error pages!
 2014.07.06 擬解決 /brython 查詢關鍵字使用流程所產生的錯誤
 
 2014.09.08 頁面標題有 + 特殊符號時產生錯誤</t>
+<t tx="2015.20141008201544.1881">can we integrate with PyGroup, after user login with Gmail account, user can maintain their own content.htm and config</t>
 <t tx="cmsxh.20131226100304.3660"></t>
 <t tx="cmsxh.20131226100304.3770">Ultrasimple Content Management System
 

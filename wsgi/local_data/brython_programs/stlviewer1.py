@@ -1,4 +1,4 @@
 from javascript import JSConstructor
 
-stlviewer = JSConstructor(STLViewer)
+stlviewer = JSConstructor(window.STLViewer)
 viewer = stlviewer("/downloads/spikeball.stl", "plotarea")

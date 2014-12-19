@@ -1,11 +1,10 @@
 from javascript import JSConstructor
-from javascript import JSObject
  
-cango = JSConstructor(Cango2D)
-shapes2d = JSObject(shapes2D)
-tweener = JSConstructor(Tweener)
-drag2d = JSConstructor(Drag2D)
-svgtocgo2d = JSConstructor(svgToCgo2D)
+cango = JSConstructor(window.Cango2D)
+shapes2d = window.shapes2D
+tweener = JSConstructor(window.Tweener)
+drag2d = JSConstructor(window.Drag2D)
+svgtocgo2d = JSConstructor(window.svgToCgo2D)
 cgo = cango("plotarea")
 
 Triangle = "M 100 100 L 300 100 L 200 300 z"

@@ -1,7 +1,7 @@
 import time
 import math
 import datetime
-import browser.timer
+from browser import timer
 
 canvas = doc["plotarea"]
 context = canvas.getContext("2d")
@@ -19,7 +19,7 @@ HAND_RADIUS = RADIUS + NUMERAL_SPACING
 def drawCircle():
     context.beginPath()
     context.arc(canvas.width/scale, canvas.height/scale,
-               RADIUS, 0, math.pi*2, true)
+               RADIUS, 0, math.pi*2, True)
     context.stroke()
 
    
@@ -36,7 +36,7 @@ def drawNumerals():
 
 def drawCenter():
     context.beginPath()
-    context.arc(canvas.width/scale, canvas.height/scale, 5, 0, math.pi*2, true)
+    context.arc(canvas.width/scale, canvas.height/scale, 5, 0, math.pi*2, True)
     context.fill()
 
 def drawHand(loc, isHour):
@@ -56,9 +56,9 @@ def drawHands():
     hour = now.hour%12 + now.minute/60
     minute = now.minute
     second = now.second+now.microsecond/1000000
-    drawHand(hour*5 + (minute/60)*5, true)
-    drawHand(minute, false)
-    drawHand(second, false)
+    drawHand(hour*5 + (minute/60)*5, True)
+    drawHand(minute, False)
+    drawHand(second, False)
 
 def drawClock():
    context.clearRect(0,0,canvas.width,canvas.height)
@@ -69,4 +69,4 @@ def drawClock():
 
 # Initialization
 
-loop = setInterval(drawClock, 1000)
+loop = timer.set_interval(drawClock, 1000)

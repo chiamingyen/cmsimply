@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import sys
 import time
-import dis
 import traceback
+import dis
 
-from browser import document as doc
-from javascript import JSObject
+from browser import document as doc, window,alert
 
 # set height of container to 66% of screen
 _height = doc.documentElement.clientHeight
@@ -14,9 +13,17 @@ _s.style.height = '%spx' % int(_height*0.66)
 
 has_ace = True
 try:
-    editor=JSObject(ace).edit("editor")
-    editor.getSession().setMode("ace/mode/python")
-    editor.setTheme("ace/theme/monokai")
+    editor = window.ace.edit("editor")
+    session = editor.getSession()
+    session.setMode("ace/mode/python")
+
+    editor.setOptions({
+     'width': '390px;',
+     'enableLiveAutocompletion': True,
+     'enableSnippets': True,
+     'highlightActiveLine': False,
+     'highlightSelectedWord': True
+    })
 except:
     from browser import html
     editor = html.TEXTAREA(rows=20,cols=70)
@@ -30,10 +37,13 @@ except:
 if sys.has_local_storage:
     from browser.local_storage import storage
 else:
-    storage = False
+    storage = None
+
+if 'set_debug' in doc:
+    __BRYTHON__.debug = int(doc['set_debug'].checked)
 
 def reset_src():
-    if storage and "py_src" in storage:
+    if storage is not None and "py_src" in storage:
        editor.setValue(storage["py_src"])
     else:
        editor.setValue('''#coding: utf-8
@@ -41,6 +51,33 @@ def reset_src():
 import random
  
 標準答案 = random.randint(1, 100)
+print(標準答案)
+你猜的數字 = int(input("請輸入您所猜的整數:"))
+猜測次數 = 1
+while 標準答案 != 你猜的數字:
+    if 標準答案 < 你猜的數字:
+        print("太大了，再猜一次 :)加油")
+    else:
+        print("太小了，再猜一次 :)加油")
+    你猜的數字 = int(input("請輸入您所猜的整數:"))
+    猜測次數 += 1
+ 
+print("猜對了！總共猜了", 猜測次數, "次")
+''')
+
+    editor.scrollToRow(0)
+    editor.gotoLine(0)
+
+def reset_src_area():
+    if storage and "py_src" in storage:
+       editor.value = storage["py_src"]
+    else:
+       editor.setValue('''#coding: utf-8
+# 猜數字遊戲
+import random
+ 
+標準答案 = random.randint(1, 100)
+print(標準答案)
 你猜的數字 = int(input("請輸入您所猜的整數:"))
 猜測次數 = 1
 while 標準答案 != 你猜的數字:
@@ -66,6 +103,7 @@ def reset_src_area():
 import random
  
 標準答案 = random.randint(1, 100)
+print(標準答案)
 你猜的數字 = int(input("請輸入您所猜的整數:"))
 猜測次數 = 1
 while 標準答案 != 你猜的數字:
@@ -80,7 +118,7 @@ print("猜對了！總共猜了", 猜測次數, "次")
 '''
 
 def write(data):
-    doc["console"].value += str(data)
+    doc["console"].value += '%s' % data
 
 #sys.stdout = object()    #not needed when importing sys via src/Lib/sys.py
 sys.stdout.write = write
@@ -91,7 +129,8 @@ sys.stderr.write = write
 def to_str(xx):
     return str(xx)
 
-#info = sys.implementation.version
+info = sys.implementation.version
+# Yen
 #doc['version'].text = '%s.%s.%s' %(info.major,info.minor,info.micro)
 
 output = ''
@@ -99,6 +138,40 @@ output = ''
 def show_console(ev):
     doc["console"].value = output
     doc["console"].cols = 60
+
+def run(in_globals=False):
+    global output
+    doc["console"].value=''
+    src = editor.getValue()
+    if storage is not None:
+       storage["py_src"]=src
+
+    t0 = time.perf_counter()
+    try:
+        if(in_globals):
+            exec(src)
+        else:
+            ns = {}
+            exec(src,ns)
+        state = 1
+    except Exception as exc:
+        traceback.print_exc()
+        state = 0
+    output = doc["console"].value
+
+    print('<completed in %6.2f ms>' % ((time.perf_counter()-t0)*1000.0))
+    return state
+
+# load a Python script
+def load_script(evt):
+    _name=evt.target.value+'?foo=%s' %time.time()
+    editor.setValue(open(_name).read())
+
+def show_js(ev):
+    src = editor.getValue()
+    doc["console"].value = dis.dis(src)
+
+# Yen defined
 
 def clear_text(ev):
     editor.setValue('')
@@ -111,7 +184,7 @@ def clear_src(ev):
     editor.setValue('')
     if sys.has_local_storage:
         storage["py_src"]=''
-        
+
 def clear_canvas(ev):
     canvas = doc["plotarea"]
     ctx = canvas.getContext("2d")
@@ -126,34 +199,6 @@ def clear_canvas(ev):
 
 def clear_console(ev):
     doc["console"].value=''
-
-def run(*args):
-    global output
-    doc["console"].value=''
-    src = editor.getValue()
-    if storage:
-       storage["py_src"]=src
-
-    t0 = time.perf_counter()
-    try:
-        exec(src,globals())
-        state = 1
-    except Exception as exc:
-        traceback.print_exc()
-        state = 0
-    output = doc["console"].value
-
-    print('<completed in %6.2f ms>' % ((time.perf_counter()-t0)*1000.0))
-    return state
-
-# load a Python script
-def load(evt):
-    _name=evt.target.value+'?foo=%s' %time.time()
-    editor.setValue(open(_name).read())
-
-def show_js(ev):
-    src = editor.getValue()
-    doc["console"].value = dis.dis(src)
 
 def change_theme(evt):
     _theme=evt.target.value
@@ -178,6 +223,5 @@ def reset_the_src(ev):
 
 if has_ace:
     reset_src()
-    reset_theme()
 else:
     reset_src_area()

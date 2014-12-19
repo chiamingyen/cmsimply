@@ -1,13 +1,14 @@
 print('start ...')
-from browser import doc, window
-from javascript import JSObject,JSConstructor
+from browser import document as doc
+from browser import window
+from javascript import JSConstructor
 import math
 
-gridX = true
-gridY = false
-gridZ = false
-axes = true
-ground = true
+gridX = True
+gridY = False
+gridZ = False
+axes = True
+ground = True
 effectController = {}
 canvasWidth = window.innerWidth
 canvasHeight = window.innerHeight
@@ -17,17 +18,17 @@ print("canvasWidth:", canvasWidth, "canvasHeight:", \
 
 # good
 def createRobotExtender(part, length, material):
-    cylindergeometryC = JSConstructor(THREE.CylinderGeometry)
+    cylindergeometryC = JSConstructor(window.THREE.CylinderGeometry)
     #CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded)
     cylindergeometry = cylindergeometryC(22, 22, 6, 32)
-    meshC = JSConstructor(THREE.Mesh)
+    meshC = JSConstructor(window.THREE.Mesh)
     cylinder = meshC(cylindergeometry, material)
     part.add(cylinder)
     for i in range(4):
-        cubegeometryC = JSConstructor(THREE.CubeGeometry)
+        cubegeometryC = JSConstructor(window.THREE.CubeGeometry)
         #CubeGeometry(width, height, depth, widthSegments, heightSegments, depthSegments)
         cubegeometry = cubegeometryC(4, length, 4)
-        meshC = JSConstructor(THREE.Mesh)
+        meshC = JSConstructor(window.THREE.Mesh)
         box = meshC(cubegeometry, material)
         if i <2:
             box.position.x = -8
@@ -41,7 +42,7 @@ def createRobotExtender(part, length, material):
         part.add( box )
 
     cylindergeometry = cylindergeometryC(15, 15, 40, 32)
-    meshC = JSConstructor(THREE.Mesh)
+    meshC = JSConstructor(window.THREE.Mesh)
     cylinder = meshC(cylindergeometry, material)
     cylinder.rotation.x = 90 * math.pi/180
     cylinder.position.y = length
@@ -49,16 +50,16 @@ def createRobotExtender(part, length, material):
 
 # good
 def createRobotCrane(part, length, material):
-    cubegeometryC = JSConstructor(THREE.CubeGeometry)
+    cubegeometryC = JSConstructor(window.THREE.CubeGeometry)
     cubegeometry = cubegeometryC(18, length, 18)
-    meshC = JSConstructor(THREE.Mesh)
+    meshC = JSConstructor(window.THREE.Mesh)
     box = meshC(cubegeometry, material)
     box.position.y = length/2
     part.add(box)
-    spheregeometryC = JSConstructor(THREE.SphereGeometry)
+    spheregeometryC = JSConstructor(window.THREE.SphereGeometry)
     #SphereGeometry(radius, widthSegments, heightSegments, phiStart, phiLength, thetaStart, thetaLength)
     spheregeometry = spheregeometryC(20, 32, 16)
-    meshC = JSConstructor(THREE.Mesh)
+    meshC = JSConstructor(window.THREE.Mesh)
     sphere = meshC(spheregeometry, material)
     # place sphere at end of arm
     sphere.position.y = length
@@ -95,22 +96,22 @@ def setupGui():
     h.add(effectController, "fz", -120.0, 120.0, 0.025).name("Forearm z")
     '''
 # camera
-cameraC = JSConstructor( THREE.PerspectiveCamera )
+cameraC = JSConstructor( window.THREE.PerspectiveCamera )
 camera = cameraC( 30, canvasRatio, 1, 10000 )
 camera.position.z = 500
 #camera.position.set( -510, 240, 1000 )
 
-sceneC = JSConstructor( THREE.Scene );
+sceneC = JSConstructor( window.THREE.Scene );
 scene = sceneC();
 
 # LIGHTS
-ambientlightC = JSConstructor(THREE.AmbientLight)
+ambientlightC = JSConstructor(window.THREE.AmbientLight)
 ambientLight = ambientlightC(0x222222)
-lightC = JSConstructor(THREE.DirectionalLight)
+lightC = JSConstructor(window.THREE.DirectionalLight)
 light = lightC(0xffffff, 1.0)
 light.position.set( 200, 400, 500 );
 
-light2C = JSConstructor(THREE.DirectionalLight)
+light2C = JSConstructor(window.THREE.DirectionalLight)
 light2 = light2C(0xffffff, 1.0)
 light2.position.set( -500, 250, -200 )
 
@@ -119,35 +120,35 @@ scene.add(light)
 scene.add(light2)
 
 '''
-geometryC = JSConstructor(THREE.CubeGeometry)
+geometryC = JSConstructor(window.THREE.CubeGeometry)
 geometry = geometryC(20, 20, 20)
-materialC = JSConstructor( THREE.MeshBasicMaterial )
+materialC = JSConstructor( window.THREE.MeshBasicMaterial )
 
 material = materialC( { "color": "#ff0000", "wireframe": True } )
 
-meshC = JSConstructor(THREE.Mesh)
+meshC = JSConstructor(window.THREE.Mesh)
 mesh = meshC(geometry, material)
 scene.add(mesh);
 '''
 
 # materialC
-materialC = JSConstructor(THREE.MeshPhongMaterial )
+materialC = JSConstructor(window.THREE.MeshPhongMaterial )
 robotBaseMaterial  = materialC({"color": 0x6E23BB, "specular": 0x6E23BB, "shininess": 20})
 robotForearmMaterial = materialC({"color": 0xF4C154, "specular": 0xF4C154, "shininess": 100})
 robotUpperArmMaterial = materialC({"color": 0x95E4FB, "specular": 0x95E4FB, "shininess": 100})
 
-torusgeometryC = JSConstructor(THREE.TorusGeometry)
+torusgeometryC = JSConstructor(window.THREE.TorusGeometry)
 torusgeometry = torusgeometryC(22, 15, 32, 32)
 
 # torus
 '''
-meshC = JSConstructor(THREE.Mesh)
+meshC = JSConstructor(window.THREE.Mesh)
 torus = meshC(torusgeometry, robotBaseMaterial)
 scene.add(torus)
 '''
 
 # forearm
-object3DC = JSConstructor(THREE.Object3D)
+object3DC = JSConstructor(window.THREE.Object3D)
 forearm = object3DC()
 faLength = 80
 createRobotExtender(forearm, faLength, robotForearmMaterial)
@@ -165,10 +166,10 @@ print("arm.position.y:", arm.position.y)
 arm.position.y = -100
 scene.add(arm)
 
-rendererC = JSConstructor(THREE.CanvasRenderer)
-renderer = rendererC({ "antialias": true } )
-renderer.gammaInput = true
-renderer.gammaOutput = true
+rendererC = JSConstructor(window.THREE.CanvasRenderer)
+renderer = rendererC({ "antialias": True } )
+renderer.gammaInput = True
+renderer.gammaOutput = True
 renderer.setSize(canvasWidth, canvasHeight)
 #renderer.setClearColorHex( 0xAAAAAA, 1.0 )
 
@@ -177,8 +178,8 @@ doc <= renderer.domElement
 renderer.render( scene, camera )
 
 def animate(i):
-    # note: three.js includes requestAnimationFrame shim
-    requestAnimationFrame( animate )
+    # note: window.THREE.js includes requestAnimationFrame shim
+    window.requestAnimationFrame( animate )
 
     #mesh.rotation.x += 0.05
     #mesh.rotation.y += 0.1
