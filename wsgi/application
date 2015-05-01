@@ -2282,10 +2282,11 @@ if (!newfile.Status) {
     <div id="msg" onclick="this.innerHTML='&nbsp;';"></div>
 
     <script id="ascript" type="text/python">
-    from browser import ajax, doc, alert, websocket
+    from browser import ajax, document as doc, alert, websocket
     from javascript import JSConstructor
+    from browser import window
 
-    spreadsheet =  JSConstructor(SocialCalc.SpreadsheetControl)()
+    spreadsheet =  JSConstructor(window.SocialCalc.SpreadsheetControl)()
     savestr = ""
     spreadsheet.InitializeSpreadsheetControl("tableeditor")
     spreadsheet.ExecuteCommand('redisplay', '')
