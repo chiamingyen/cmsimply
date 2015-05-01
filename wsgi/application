@@ -1762,7 +1762,7 @@ if (!newfile.Status) {
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <link rel="stylesheet" type="text/css" href="/static/console.css">
     <link rel="stylesheet" type="text/css" href="/static/brython.css">
-    <script type="text/javascript" src="/static/Brython3.0.1-20141213-112128/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="https://togetherjs.com/togetherjs-min.js"></script>
 
     <script src="/static/ace/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -1816,6 +1816,8 @@ if (!newfile.Status) {
     <script type="text/python3">
     from browser import document as doc
     from browser import html
+    from browser import window
+    import editor
 
 
     overwrite = 0
@@ -1903,8 +1905,6 @@ if (!newfile.Status) {
         reset_theme()
         
     def get_radio(ev):
-        from javascript import JSObject
-        #filename = JSObject(getradio)("filename")
         filename = window.getradio("filename")
         # ajax can only read data from server
         doc["filename"].value = filename
@@ -1927,18 +1927,18 @@ if (!newfile.Status) {
     '''
         part2 = '''
     # next functions are defined in editor.py
-    doc['show_js'].bind('click',show_js)
-    doc['run'].bind('click',run)
-    doc['show_console'].bind('click',show_console)
+    doc['show_js'].bind('click',editor.show_js)
+    doc['run'].bind('click',editor.run)
+    doc['show_console'].bind('click',editor.show_console)
     # get_prog and get _radio (working)
     doc['get_prog'].bind('click', get_prog)
     doc['get_radio'].bind('click', get_radio)
     # reset_the_src and clear_console (working)
-    doc['reset_the_src'].bind('click',reset_the_src)
-    doc['clear_console'].bind('click',clear_console)
+    doc['reset_the_src'].bind('click',editor.reset_the_src)
+    doc['clear_console'].bind('click',editor.clear_console)
     # clear_canvas and clear_src
-    doc['clear_canvas'].bind('click',clear_canvas)
-    doc['clear_src'].bind('click',clear_src)
+    doc['clear_canvas'].bind('click',editor.clear_canvas)
+    doc['clear_src'].bind('click',editor.clear_src)
     # only admin can save program to server
     '''
         adm2 = '''
@@ -2061,7 +2061,7 @@ if (!newfile.Status) {
     <html>
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
-    <script type="text/javascript" src="/static/Brython3.0.1-20141213-112128/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script type="text/javascript" src="/static/socialcalc/socialcalcconstants.js"></script>
     <script type="text/javascript" src="/static/socialcalc/socialcalc-3.js"></script>
     <script type="text/javascript" src="/static/socialcalc/socialcalctableeditor.js"></script>
@@ -2077,10 +2077,11 @@ if (!newfile.Status) {
     <div id="msg" onclick="this.innerHTML='&nbsp;';"></div>
 
     <script id="ascript" type="text/python">
-    from browser import ajax, doc, alert, websocket
+    from browser import ajax, document as doc, alert, websocket
     from javascript import JSConstructor
+    from browser import window
 
-    spreadsheet =  JSConstructor(SocialCalc.SpreadsheetControl)()
+    spreadsheet =  JSConstructor(window.SocialCalc.SpreadsheetControl)()
     savestr = ""
     spreadsheet.InitializeSpreadsheetControl("tableeditor")
     spreadsheet.ExecuteCommand('redisplay', '')
@@ -2253,7 +2254,7 @@ if (!newfile.Status) {
     <html>
     <head>
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
-    <script type="text/javascript" src="/static/Brython3.0.1-20141213-112128/brython.js"></script>
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script type="text/javascript" src="/static/socialcalc/socialcalcconstants.js"></script>
     <script type="text/javascript" src="/static/socialcalc/socialcalc-3.js"></script>
     <script type="text/javascript" src="/static/socialcalc/socialcalctableeditor.js"></script>
@@ -2389,8 +2390,7 @@ if (!newfile.Status) {
             doc["result"].html = "can not get "+doc["filename"].value+"!"
 
     def get_radio(ev):
-        from javascript import JSObject
-        filename = JSObject(getradio)("filename")
+        filename = window.getradio("filename")
         # ajax can only read data from server
         doc["filename"].value = filename
         _name = '/calc_programs/'+filename

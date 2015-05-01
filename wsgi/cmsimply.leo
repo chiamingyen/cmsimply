@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Created by Leo: http://leoeditor.com/leo_toc.html -->
-<?xml-stylesheet ekr_test?>
+<?xml-stylesheet ekr_test ?>
 <leo_file xmlns:leo="http://leoeditor.com/namespaces/leo-python-editor/1.1" >
 <leo_header file_format="2" tnodes="0" max_tnode_index="0" clone_windows="0"/>
 <globals body_outline_ratio="0.5" body_secondary_ratio="0.5">
@@ -25,7 +25,7 @@
 <v t="2014pythonE.20140312072052.1942"><vh>about syntaxhighlight</vh></v>
 <v t="2014pythonE.20140424170033.3315"><vh>about duplicate heading</vh></v>
 <v t="2014pythonE.20140313091306.1898"><vh>Brython ajax</vh></v>
-<v t="2014fall.20141219135032.2091" a="E"><vh>Brython 3.0.1 修改</vh>
+<v t="2014fall.20141219135032.2091"><vh>Brython 3.0.1 修改</vh>
 <v t="2014fall.20141219135032.2092" a="E"><vh>變更</vh>
 <v t="2014fall.20141219135032.2093"><vh>Cango 程式改寫</vh></v>
 <v t="2014fall.20141219135032.2094"><vh>fourbar.js 呼叫改寫</vh></v>
@@ -33,6 +33,7 @@
 <v t="2014fall.20141219135032.2095"><vh>新的 editor.py</vh></v>
 <v t="2014fall.20141219135032.2096"><vh>舊的 editor.py</vh></v>
 </v>
+<v t="amd.20150501162657.1"><vh>Brython 3.1.1 修改</vh></v>
 <v t="2014spring.20140605210826.1877"><vh>errors</vh></v>
 <v t="2014pythonE.20140313212213.1898"><vh>CherryPy ajax example</vh>
 <v t="2014pythonE.20140313212213.1899"><vh>another example</vh></v>
@@ -126,7 +127,7 @@ doc['run_js'].bind('click', window.run_js)
 doc['set_debug'].bind('change',set_debug)
 
 # next functions are defined in editor.py
-doc['show_js'].bind('click',show_js)
+doc['show_js'].bind('click', show_js)
 doc['run'].bind('click',run)
 doc['show_console'].bind('click',show_console)
 
@@ -2548,6 +2549,129 @@ We need custom error pages!
 
 2014.09.08 頁面標題有 + 特殊符號時產生錯誤</t>
 <t tx="2015.20141008201544.1881">can we integrate with PyGroup, after user login with Gmail account, user can maintain their own content.htm and config</t>
+<t tx="amd.20150501162657.1">&lt;script type="text/python3"&gt;
+from browser import document as doc
+from browser import html
+import header
+
+qs_lang,language = header.show('../')
+
+# other translations
+
+trans = {
+    'report_bugs':{'en':'Please report bugs in the ',
+                   'es':'Poner los bugs en el ',
+                   'fr':"Signalez les bugs dans l'"},
+    'test_page':{'en':'Tests page','es':'P&amp;aacute;gina de pruebas','fr':'Page de tests'},
+    'run':{'en':'run','es':'ejecutar','fr':'ex?cuter'},
+    'clear':{'en':'clear','es':'borrar','fr':'effacer'}
+}
+
+for key in trans:
+    if key in doc:
+        doc[key].html = trans[key].get(language,trans[key]['en'])
+
+# link to test page
+tplink = doc['test_page']
+if qs_lang:
+    tplink.href += '?lang=%s' %qs_lang
+
+def set_debug(ev):
+    if ev.target.checked:
+        __BRYTHON__.debug = 1
+    else:
+        __BRYTHON__.debug = 0
+
+__BRYTHON__.debug = int(doc['set_debug'].checked)
+
+# bindings
+doc['run_js'].bind('click', window.run_js)
+doc['set_debug'].bind('change',set_debug)
+
+# next functions are defined in editor.py
+doc['show_js'].bind('click', editor.show_js)
+doc['run'].bind('click',run)
+doc['show_console'].bind('click',show_console)
+
+# erase "main" div
+def clear_main(ev):
+    doc['main'].text = ''
+
+main_content = 'Zone with id="main" ; use it to test interaction with DOM elements'
+
+# add "main" div
+def add_main(ev):
+    global main_content
+    try:
+        # if "main" div already exists, save content and erase container
+        main_content = doc["main"].html
+        doc["main_container"].html = ""
+        doc["add_main"].text = 'Show "main" div'
+    except KeyError:
+        t = html.TABLE()
+        row = html.TR()
+        b = html.BUTTON('Clear')
+        b.bind('click', clear_main)
+        row &lt;= html.TD(b)+html.TD(html.DIV(Id="main"))
+        t &lt;= row
+        doc["main_container"] &lt;= t
+        doc["main"].html = main_content
+        doc["add_main"].text = 'Hide "main" div'
+
+doc["add_main"].bind('click', add_main)
+
+&lt;/script&gt;
+
+&lt;script&gt;
+function run_js(){
+    var cons = document.getElementById("console")
+    var jscode = cons.value
+    var t0 = (new Date()).getTime()
+    eval(jscode)
+    var t1 = (new Date()).getTime()
+    console.log("Javascript code run in "+(t1-t0)+" ms")
+}
+&lt;/script&gt;
+&lt;/head&gt;
+&lt;body onload="brython({debug:1, cache:'version'})"&gt;
+
+&lt;table id="banner" cellpadding=0 cellspacing=0&gt;
+&lt;tr id="banner_row"&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;div id="main_container"&gt;&lt;/div&gt;
+
+&lt;div style="text-align:center"&gt;Brython version: &lt;span id="version"&gt;&lt;/span&gt;
+&lt;/div&gt;
+&lt;/center&gt;
+
+&lt;div id="container"&gt;
+&lt;div id="left-div"&gt;
+&lt;div style="padding: 3px 3px 3px 3px;"&gt;
+&lt;button id="add_main"&gt;Add &lt;b&gt;&amp;lt;div id=main&amp;gt;&lt;/b&gt;&lt;/button&gt;
+
+&lt;/div&gt;
+  &lt;div id="editor" style="width:100%;"&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div id="right-div"&gt;
+&lt;div style="padding: 3px 3px 3px 3px;"&gt;
+  &lt;div style="float:left"&gt;
+    &lt;button id="run"&gt; ▶ Run&lt;/button&gt;
+    &lt;button id="run_js"&gt; ▶ Run Javascript&lt;/button&gt;
+    Debug&lt;input type="checkbox" id="set_debug" checked&gt;
+  &lt;/div&gt;
+
+  &lt;div style="float:right"&gt;
+    &lt;button id="show_console"&gt;Python&lt;/button&gt;
+    &lt;button id="show_js"&gt;Javascript&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div style="width:100%;height:100%;"&gt;
+&lt;textarea id="console"&gt;&lt;/textarea&gt;
+&lt;/div&gt;
+&lt;/div&gt;</t>
 <t tx="cmsxh.20131226100304.3660"></t>
 <t tx="cmsxh.20131226100304.3770">Ultrasimple Content Management System
 
