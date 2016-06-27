@@ -43,7 +43,7 @@
 <v t="cmsxh.20131226100304.3674"><vh>editorfoot</vh></v>
 <v t="cmsxh.20131226100304.3675"><vh>tinymce_editor (#4)</vh></v>
 <v t="cmsxh.20131226100304.3676"><vh>parse_config</vh></v>
-<v t="cmsxh.20131226100304.3677"><vh>file_selector_script</vh></v>
+<v t="cmsxh.20131226100304.3677"><vh>file_selector_script (#4)</vh></v>
 <v t="cmsxh.20131226100304.3678"><vh>file_lister</vh></v>
 <v t="cmsxh.20131226100304.3679"><vh>downloadselect_access_list</vh></v>
 <v t="2014pythonE.20140321113009.1825"><vh>loadlist_access_list</vh></v>
@@ -105,9 +105,6 @@
 <v t="2014pythonE.20140312215910.1786"><vh>@edit console.css</vh></v>
 <v t="2014pythonE.20140312215910.1787"><vh>@edit brython.css</vh></v>
 <v t="2014pythonE.20140312215910.1788"><vh>@edit editor.py</vh></v>
-<v t="amd.20160623153816.1" a="E"><vh>@path tinymce4/inits</vh>
-<v t="amd.20160623153816.2"><vh>@edit init_narrow.js</vh></v>
-</v>
 </v>
 </v>
 </vnodes>
@@ -1610,7 +1607,6 @@ reset_theme()
     else:
         return part1+adm1+part2+adm2+load_program+part3+self.load_list(item_per_page, page, "brython", keyword)+part4+adm3+part5
 </t>
-<t tx="amd.20160623153816.1"></t>
 <t tx="amd.20160623221635.1"></t>
 <t tx="amd.20160627092305.1">使用 tinymce4 的 CMSimply4 版本</t>
 <t tx="amd.20160627150746.1">https://pixabay.com/en/blog/posts/direct-image-uploads-in-tinymce-4-42/
@@ -1844,7 +1840,8 @@ else:
 </t>
 <t tx="cmsxh.20131226100304.3664"># set_admin_css for administrator
 def set_admin_css():
-    outstring = '''&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;
+    outstring = '''&lt;!doctype html&gt;
+&lt;html&gt;&lt;head&gt;
 &lt;meta http-equiv="content-type" content="text/html;charset=utf-8"&gt;
 &lt;title&gt;CMSimply - Simple Cloud CMS in Python 3&lt;/title&gt; \
 &lt;link rel="stylesheet" type="text/css" href="/static/cmsimply.css"&gt;
@@ -2040,24 +2037,23 @@ def search_content(head, page, search):
 </t>
 <t tx="cmsxh.20131226100304.3672">def editorhead():
     return '''
-&lt;br /&gt;
-&lt;script src="/static/tinymce4/tinymce/tinymce.min.js"&gt;&lt;/script&gt;
+    &lt;br /&gt;
+&lt;script src="//cdn.tinymce.com/4/tinymce.min.js"&gt;&lt;/script&gt;
 &lt;script&gt;
 tinymce.init({
-    selector: "textarea",
-    height: "500",
-    element_format : "xhtml",
-    language : "en",
-    plugins: [
+  selector: "textarea",
+  height: 500,
+  element_format : "xhtml",
+  language : "en",
+  plugins: [
     "advlist autolink autosave save link image lists charmap print preview hr anchor pagebreak spellchecker",
     "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-    "table contextmenu directionality emoticons template textcolor paste textcolor colorpicker textpattern sh4tinymce"
+    "table contextmenu directionality emoticons template textcolor paste textcolor colorpicker textpattern"
   ],
 
-  toolbar1: "save,|,fullscreen,code,formatselect,fontselect,fontsizeselect,styleselect,sh4tinymce",
-  toolbar2: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,cut,copy,paste,pastetext,pasteword,|,bullist,numlist,outdent,indent,blockquote",
-  toolbar3: "undo,redo,|,link,unlink,anchor,image,media,cleanup,|,hr,removeformat,|,forecolor,backcolor,|,search,replace,|,charmap",
-  toolbar4: "emoticons,subscript,superscript,|,table,insertdatetime,help",
+  toolbar1: "save bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+  toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | insertdatetime preview | forecolor backcolor",
+  toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft",
 
   menubar: false,
   toolbar_items_size: 'small',
@@ -2102,7 +2098,11 @@ tinymce.init({
   }, {
     title: 'Test template 2',
     content: 'Test 2'
-  }]
+  }],
+  content_css: [
+    '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+    '//www.tinymce.com/css/codepen.min.css'
+  ]
 });
 
 function cmsFilePicker(callback, value, meta) {
@@ -2117,19 +2117,6 @@ function cmsFilePicker(callback, value, meta) {
         }
     });
 };
-
-$(function(){
-    $('.img').on('click', function(event){
-        mySubmit('/upload/' + $(this).data('filename'));
-    });
-});
-
-function mySubmit (url, objVals) {
-    top.tinymce.activeEditor.windowManager.getParams().oninsert(url, objVals);
-    top.tinymce.activeEditor.windowManager.close();
-    return false;
-}
-
 &lt;/script&gt;
 '''
 </t>
@@ -2177,7 +2164,6 @@ function mySubmit (url, objVals) {
 &lt;script language="javascript" type="text/javascript"&gt;
 $(function(){
     $('.a').on('click', function(event){
-        //setLink('/upload/' + $(this).data('filename'));
         setLink();
     });
 });
@@ -2481,7 +2467,7 @@ def get_page(self, heading=None, edit=0, *args, **kwargs):
             raise cherrypy.HTTPRedirect("login")
         else:
             if len(page_order_list) &gt; 1:
-                # 若碰到重複頁面頁印, 且要求編即, 則導向 edit_page
+                # 若碰到重複頁面頁印, 且要求編輯, 則導向 edit_page
                 #raise cherrypy.HTTPRedirect("edit_page")
                 for i in range(len(page_order_list)):
                     outstring_duplicate += outstring_list[i]+"&lt;br /&gt;&lt;hr&gt;"
@@ -2763,15 +2749,15 @@ def download_list(self, item_per_page=5, page=1, keyword=None, *args, **kwargs):
 <t tx="cmsxh.20131226100304.3700">@cherrypy.expose
 def creo_getvolume(self, *args, **kwargs):
     return '''
-\\-4.&lt;script src="/static/weblink/pfcUtils.js"&gt;
-\\-4.&lt;/script&gt;&lt;script  src="/static/weblink/pfcParameterExamples.js"&gt;&lt;/script&gt;&lt;script  src="/static/weblink/pfcComponentFeatExamples.js"&gt;
-\\-3.document.writeln ("Error loading script!");
-\\-4.&lt;/script&gt;&lt;script language="JavaScript"&gt;
+&lt;script src="/static/weblink/pfcUtils.js"&gt;
+&lt;/script&gt;&lt;script  src="/static/weblink/pfcParameterExamples.js"&gt;&lt;/script&gt;&lt;script  src="/static/weblink/pfcComponentFeatExamples.js"&gt;
+document.writeln ("Error loading script!");
+&lt;/script&gt;&lt;script language="JavaScript"&gt;
 if (!pfcIsWindows())
     netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-\\-2.var session = pfcGetProESession ();
-\\-4.// for volume
-\\-2.var solid = session.CurrentModel;
+var session = pfcGetProESession ();
+// for volume
+var solid = session.CurrentModel;
 try
     {
         createParametersFromArguments ();
@@ -2783,23 +2769,23 @@ catch (err)
     {
         alert ("Exception occurred: "+pfcGetExceptionType (err));
    }
-\\-4.&lt;/script&gt;
-\\-4.'''
+&lt;/script&gt;
+'''
 </t>
 <t tx="cmsxh.20131226100304.3701">@cherrypy.expose
 def anglebracket(self, *args, **kwargs):
     return '''
-\\-4.&lt;script src="/static/weblink/pfcUtils.js"&gt;
-\\-4.&lt;/script&gt;&lt;script src="/static/weblink/wl_header.js"&gt;
-\\-4.document.writeln ("Error loading Pro/Web.Link header!");
-\\-4.&lt;/script&gt;&lt;script language="JavaScript"&gt;
-\\-4.if (!pfcIsWindows()) netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-\\-4.// if the third input is false, it means use session, but will not be displayed
-\\-4.// ret is the model open return
-\\-3.var ret = document.pwl.pwlMdlOpen("angle_bracket_creo.prt", "c:/tmp", false);
-\\-4.if (!ret.Status) {
+&lt;script src="/static/weblink/pfcUtils.js"&gt;
+&lt;/script&gt;&lt;script src="/static/weblink/wl_header.js"&gt;
+document.writeln ("Error loading Pro/Web.Link header!");
+&lt;/script&gt;&lt;script language="JavaScript"&gt;
+if (!pfcIsWindows()) netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
+// if the third input is false, it means use session, but will not be displayed
+// ret is the model open return
+var ret = document.pwl.pwlMdlOpen("angle_bracket_creo.prt", "c:/tmp", false);
+if (!ret.Status) {
 alert("pwlMdlOpen failed (" + ret.ErrorCode + ")");
-\\-4.}
+}
 var session = pfcGetProESession();
 var window = session.OpenFile(pfcCreate("pfcModelDescriptor").CreateFromFileName("angle_bracket_creo.prt"));
 var solid = session.GetModel("angle_bracket_creo.prt",pfcCreate("pfcModelType").MDL_PART);
@@ -2826,13 +2812,13 @@ try
                 solid.Regenerate(void null);
                 properties = solid.GetMassProperty(void null);
                 //volume = volume + properties.Volume;
-\\-4.volume = properties.Volume;
+volume = properties.Volume;
                 count = count + 1;
-\\-4.alert("execute no: "+count+", part volume:"+volume);
-\\-4.var newfile = document.pwl.pwlMdlSaveAs("angle_bracket_creo.prt", "c:/tmp", "cadp_w12_py_"+count+".prt");
-\\-4.if (!newfile.Status) {
+alert("execute no: "+count+", part volume:"+volume);
+var newfile = document.pwl.pwlMdlSaveAs("angle_bracket_creo.prt", "c:/tmp", "cadp_w12_py_"+count+".prt");
+if (!newfile.Status) {
 alert("pwlMdlSaveAs failed (" + newfile.ErrorCode + ")");
-\\-4.//}
+//}
             }
         }
         //alert("totally execute:"+count+"times, part volume:"+volume);
@@ -2843,8 +2829,8 @@ catch(err)
     {
         alert ("Exception occurred: "+pfcGetExceptionType (err));
     }
-\\-4.&lt;/script&gt;
-\\-4.'''
+&lt;/script&gt;
+'''
 </t>
 <t tx="cmsxh.20131226100304.3702">@cherrypy.expose
 def search_form(self):
@@ -2878,7 +2864,8 @@ def doSearch(self, keyword=None):
      &lt;/section&gt;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;"
 </t>
 <t tx="cmsxh.20131226100304.3704">def set_css(self):
-    outstring = '''&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;
+    outstring = '''&lt;!doctype html&gt;
+&lt;html&gt;&lt;head&gt;
 &lt;meta http-equiv="content-type" content="text/html;charset=utf-8"&gt;
 &lt;title&gt;CMSimply - Simple Cloud CMS in Python 3&lt;/title&gt; \
 &lt;link rel="stylesheet" type="text/css" href="/static/cmsimply.css"&gt;
