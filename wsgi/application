@@ -275,41 +275,6 @@ def render_menu(head, level, page, sitemap=0):
         current_level = level[index]
     directory += "</li></ul>"
     return directory
-def filebrowser():
-    return '''
-<script type="text/javascript">
-function wrFilebrowser (field_name, url, type, win) {
-poppedUpWin = win;
-inputField = field_name;
-if (type == "file") {type = "downloads"};
-var cmsURL = "/file_selector";    
-
-if (cmsURL.indexOf("?") < 0) {
-    cmsURL = cmsURL + "?type="+ type ;
-}
-else {
-    cmsURL = cmsURL + "&type="+type ;
-}
-
-tinyMCE.activeEditor.windowManager.open(
-    {
-        file  : cmsURL,
-        width : 800,
-        height : 600,
-        resizable : "yes",
-        inline : "yes",
-        close_previous : "no",
-        popup_css : false,
-        scrollbars : "yes"
-      },
-      {
-        window : win,
-        input : field_name
-      }
-);
-return false;
-}
-'''
 def syntaxhighlight():
     return '''
 <script type="text/javascript" src="/static/syntaxhighlighter/shCore.js"></script>
@@ -327,86 +292,103 @@ def syntaxhighlight():
 '''
 def editorhead():
     return '''
-<script language="javascript" type="text/javascript" src="/static/tinymce3/tiny_mce/tiny_mce.js"></script>
-<script type="text/javascript" src="/static/tinymce3/init.js"></script>
-'''
-def tinymceinit():
-    return '''
-<script language="javascript" type="text/javascript">
-function tinyMCE_initialize0() {
-    tinyMCE_instantiateByClasses('simply-editor', {
-// General options
+<br />
+<script src="/static/tinymce4/tinymce/tinymce.min.js"></script>
+<script>
+tinymce.init({
+    selector: "textarea",
+    height: "500",
+    element_format : "xhtml",
+    language : "en",
+    plugins: [
+    "advlist autolink autosave save link image lists charmap print preview hr anchor pagebreak spellchecker",
+    "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
+    "table contextmenu directionality emoticons template textcolor paste textcolor colorpicker textpattern sh4tinymce"
+  ],
 
-theme : "advanced",
-width : "800",
-height : "600",
-element_format : "html",
-language : "en",
-plugins : "autolink,autosave,pagebreak,style,layer,table,save,advimage,advlink,advhr,emotions,iespell,"
-        + "insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,"
-        + "noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,media,lists,syntaxhl",
+  toolbar1: "save,|,fullscreen,code,formatselect,fontselect,fontsizeselect,styleselect,sh4tinymce",
+  toolbar2: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,cut,copy,paste,pastetext,pasteword,|,bullist,numlist,outdent,indent,blockquote",
+  toolbar3: "undo,redo,|,link,unlink,anchor,image,media,cleanup,|,hr,removeformat,|,forecolor,backcolor,|,search,replace,|,charmap",
+  toolbar4: "emoticons,subscript,superscript,|,table,insertdatetime,help",
 
-// Theme options
-theme_advanced_buttons1 : "save,|,fullscreen,code,formatselect,fontselect,fontsizeselect,styleselect,syntaxhl",
-theme_advanced_buttons2 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,cut,copy,paste,pastetext,pasteword,|,bullist,numlist,outdent,indent,blockquote",
-theme_advanced_buttons3 : "undo,redo,|,link,unlink,anchor,image,media,cleanup,|,hr,removeformat,visualaid,|,forecolor,backcolor,|,search,replace,|,charmap",
-theme_advanced_buttons4 : "emotions,sub,sup,|,tablecontrols,insertdate,inserttime,help",
-theme_advanced_toolbar_location : "top",
-theme_advanced_toolbar_align : "left",
-theme_advanced_statusbar_location : "bottom",
-theme_advanced_resizing : true,
-theme_advanced_blockformats : "h1,h2,h3,p,div,h4,h5,h6,blockquote,dt,dd,code",
-theme_advanced_font_sizes : "8px=8px, 10px=10px,12px=12px, 14px=14px, 16px=16px, 18px=18px,20px=20px,24px=24px,36px=36px",
+  menubar: false,
+  toolbar_items_size: 'small',
+  file_picker_callback: function(callback, value, meta) {
+        cmsFilePicker(callback, value, meta);
+    },
 
-content_css : "/static/cmsimply.css",
-//link and image list
-external_image_list_url: "/static/tinymce3/cms_image_list.js",
-external_link_list_url: "/static/tinymce3/cms_link_list.js",
+  style_formats: [{
+    title: 'Bold text',
+    inline: 'b'
+  }, {
+    title: 'Red text',
+    inline: 'span',
+    styles: {
+      color: '#ff0000'
+    }
+  }, {
+    title: 'Red header',
+    block: 'h1',
+    styles: {
+      color: '#ff0000'
+    }
+  }, {
+    title: 'Example 1',
+    inline: 'span',
+    classes: 'example1'
+  }, {
+    title: 'Example 2',
+    inline: 'span',
+    classes: 'example2'
+  }, {
+    title: 'Table styles'
+  }, {
+    title: 'Table row 1',
+    selector: 'tr',
+    classes: 'tablerow1'
+  }],
 
-// Extra
-plugin_insertdate_dateFormat: "%d-%m-%Y",
-plugin_insertdate_timeFormat: "%H:%M:%S",
-inline_styles : true,
-apply_source_formatting : true,
-relative_urls : true,
-convert_urls: false,
-entity_encoding : "raw",
-
-file_browser_callback: "wrFilebrowser" ,
-fullscreen_new_window : false ,
-fullscreen_settings : {
-theme_advanced_buttons1: "save,|,fullscreen,code,|,formatselect,fontselect,fontsizeselect,styleselect,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,cut,copy,paste,pastetext,pasteword,|,bullist,numlist,outdent,indent,blockquote,|,undo,redo",
-theme_advanced_buttons2 : "link,unlink,anchor,image,media,cleanup,|,hr,removeformat,visualaid,|,forecolor,backcolor,|,search,replace,|,charmap,emotions,|,sub,sup,tablecontrols,insertdate,inserttime,|,help",
-theme_advanced_buttons3 : "",
-theme_advanced_buttons4 : ""
-}
+  templates: [{
+    title: 'Test template 1',
+    content: 'Test 1'
+  }, {
+    title: 'Test template 2',
+    content: 'Test 2'
+  }]
 });
+
+function cmsFilePicker(callback, value, meta) {
+    tinymce.activeEditor.windowManager.open({
+        title: 'Uploaded File Browser',
+        url: '/file_selector?type=' + meta.filetype,
+        width: 800,
+        height: 550,
+    }, {
+        oninsert: function (url, objVals) {
+            callback(url, objVals);
+        }
+    });
+};
+
+$(function(){
+    $('.img').on('click', function(event){
+        mySubmit('/upload/' + $(this).data('filename'));
+    });
+});
+
+function mySubmit (url, objVals) {
+    top.tinymce.activeEditor.windowManager.getParams().oninsert(url, objVals);
+    top.tinymce.activeEditor.windowManager.close();
+    return false;
 }
+
 </script>
 '''
 def editorfoot():
-    return '''<body id="body"  onload="tinyMCE_initialize0();">'''
+    return '''<body>'''
 def tinymce_editor(menu_input=None, editor_content=None, page_order=None):
-    files = os.listdir(download_root_dir+"downloads/")
-    link_list = ""
-    image_list = ""
-    for index in range(len(files)):
-        file_url = "download/?filepath="+download_root_dir.replace('\\', '/')+"downloads/"+files[index]
-        link_list += "['"+files[index]+"', '"+file_url+"']"
-        if index != len(files)-1:
-            link_list += ","
-    # deal with image link
-    images = os.listdir(download_root_dir+"images/")
-    for index in range(len(images)):
-        image_url = "/images/"+images[index]
-        image_list += "['"+images[index]+"', '"+image_url+"']"
-        if index != len(images)-1:
-            image_list += ","
     sitecontent =file_get_contents(data_dir+"content.htm")
-    editor = set_admin_css()+editorhead()+filebrowser()+'''
-var myImageList = new Array('''+image_list+''');
-var myLinkList = new Array('''+link_list+''');
-</script>'''+tinymceinit()+'''</head>'''+editorfoot()
+    editor = set_admin_css()+editorhead()+'''</head>'''+editorfoot()
     # edit all pages
     if page_order == None:
         outstring = editor + "<div class='container'><nav>"+ \
@@ -440,35 +422,18 @@ def parse_config():
     return site_title, password
 def file_selector_script():
     return '''
-<script type="text/javascript" src="/static/tinymce3/tiny_mce/tiny_mce_popup.js"></script>
 <script language="javascript" type="text/javascript">
+$(function(){
+    $('.a').on('click', function(event){
+        //setLink('/upload/' + $(this).data('filename'));
+        setLink();
+    });
+});
 
-var FileBrowserDialogue = {
-    
-    init : function () {
-        // Nothing to do
-    },
-
-   
-    submit : function (url) {
-        var URL = url;
-        var win = tinyMCEPopup.getWindowArg("window");
-        var input = win.document.getElementById(tinyMCEPopup.getWindowArg("input"));
-        win.document.getElementById(tinyMCEPopup.getWindowArg("input")).value = URL;
-
-        input.value = URL;
-        if (input.onchange) input.onchange();
-
-        tinyMCEPopup.close();
-    }
-}
-
-tinyMCEPopup.onInit.add(FileBrowserDialogue.init, FileBrowserDialogue);
-
-function setLink(link){
-
-    FileBrowserDialogue.submit(link);
-    return true;
+function setLink (url, objVals) {
+    top.tinymce.activeEditor.windowManager.getParams().oninsert(url, objVals);
+    top.tinymce.activeEditor.windowManager.close();
+    return false;
 }
 </script>
 '''
@@ -883,6 +848,7 @@ class CMSimply(object):
             raise cherrypy.HTTPRedirect("login")
         if page_content == None:
             return self.error_log("no content to save!")
+        # 請注意, 若啟用 fullpage plugin 這裡的 page_content tinymce4 會自動加上 html 頭尾標註
         page_content = page_content.replace("\n","")
         head, level, page = parse_content()
         original_head_title = head[int(page_order)]
@@ -1073,8 +1039,11 @@ remotePath:function(){
         if not self.isAdmin():
             raise cherrypy.HTTPRedirect("login")
         else:
-            if type == "downloads":
+            #if type == "downloads":
+            if type == "file":
                 #return downloads_file_selector()
+                # 請注意因為在 editorhead 以 meta 判斷 filetyp, 所以前段 type 為 file, 但是後段必須與 file_lister 中的 type = downloads 配合, 所以目前前後的 type 字串不同, 之後整合修改時將修正, 設法讓  type 前後一致
+                type = 'downloads'
                 return file_lister("downloads", type, page, item_per_page)
             elif type == "image":
                 #return images_file_selector()
@@ -1982,6 +1951,305 @@ if (!newfile.Status) {
         else:
             return part1+adm1+part2+adm2+load_program+part3+self.load_list(item_per_page, page, "brython", keyword)+part4+adm3+part5
     @cherrypy.expose
+    # 採用 codemirror.js 當作 editor
+    def brythonw(self, item_per_page=5, page=1, keyword=None, filename=None, *args, **kwargs):
+        part1 =  '''
+    <!DOCTYPE html> 
+    <html>
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <link rel="stylesheet" type="text/css" href="/static/console.css">
+    <link rel="stylesheet" type="text/css" href="/static/brython.css">
+    <link rel="stylesheet" type="text/css" href="/static/codemirror/codemirror.css">
+    <script type="text/javascript" src="/static/Brython3.2.0-20150701-214155/brython.js"></script>
+    <script src="https://togetherjs.com/togetherjs-min.js"></script>
+
+    <script src="/static/codemirror/codemirror.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="/static/Cango2D.js" type="text/javascript">
+    </script>
+    <script src="/static/yen_fourbar.js" type="text/javascript">
+    </script>
+    <script src="/static/gearUtils-04.js" type="text/javascript">
+    </script>
+    <script src="/static/jsc3d.js" type="text/javascript">
+    </script>
+    <script src="/static/stlviewer.js" type="text/javascript">
+    </script>
+    <script src="/static/threejs/three.min.js" type="text/javascript">
+    </script>
+    <script src="/static/threejs/Coordinates.js" type="text/javascript">
+    </script>
+    <script src="/static/threejs/dat.gui.min.js" type="text/javascript">
+    </script>
+    <script src="/static/threejs/Detector.js" type="text/javascript">
+    </script>
+    <script src="/static/threejs/OrbitAndPanControls.js" type="text/javascript">
+    </script>
+    <script type="text/javascript" >
+    function getradio(tagname){
+    var radios = document.getElementsByName(tagname);
+    for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+            // do whatever you want with the checked radio
+            return radios[i].value;
+            // only one radio can be logically checked, don't check the rest
+            break;
+          }
+       }
+    }
+
+    function run_js(){
+        var cons = document.getElementById("console")
+        var jscode = cons.value
+        var t0 = (new Date()).getTime()
+        eval(jscode)
+        var t1 = (new Date()).getTime()
+        console.log("Javascript code run in "+(t1-t0)+" ms")
+    }
+    </script>
+    <script type="text/python3" src="/static/editor.py"></script>
+    <script type="text/python3">
+    from browser import document as doc
+    from browser import html
+    from browser import window
+    import editor
+
+
+    overwrite = 0
+    # add delete_program 1/7, seven steps to complete the ajax task, the last step is to add delete_program function on server
+    # delete1 and delete2 parameters are also added into save_program function.
+    delete1 = 0
+    delete2 = 0
+
+    def set_debug(ev):
+        if ev.target.checked:
+            __BRYTHON__.debug = 1
+        else:
+            __BRYTHON__.debug = 0
+            
+    def set_overwrite(ev):
+        global overwrite
+        if ev.target.checked:
+            overwrite = 1
+        else:
+            overwrite = 0
+
+    # add delete_program 2/7, client side add set_delete1 and set_delete2 functions.
+    def set_delete1(ev):
+        global delete1
+        if ev.target.checked:
+            delete1 = 1
+        else:
+            delete1 = 0
+
+    def set_delete2(ev):
+        global delete2
+        if ev.target.checked:
+            delete2 = 1
+        else:
+            delete2 = 0
+
+    #### ajax process
+    from browser import ajax,doc
+
+    def on_complete(req):
+        print(req.readyState)
+        print('status',req.status)
+        if req.status==200 or req.status==0:
+            # show request text on id=result division
+            doc["result"].html = req.text
+        else:
+            doc["result"].html = "error "+req.text
+
+    def err_msg():
+        doc["result"].html = "server didn't reply after %s seconds" %timeout
+
+    timeout = 4
+
+    def go(url):
+        req = ajax.ajax()
+        req.bind('complete', on_complete)
+        req.set_timeout(timeout, err_msg)
+        req.open('GET', url, True)
+        req.send()
+
+    def post(url):
+        req = ajax.ajax()
+        req.bind('complete', on_complete)
+        req.set_timeout(timeout, err_msg)
+        req.open('POST', url, True)
+        req.set_header('content-type','application/x-www-form-urlencoded')
+        # doc["filename"].value is the id=filename input field's value
+        # editor.getValue() is the content on editor, need to send dictionary format data
+        # while post url, need to save editor content into local_storage to use the previous load javascripts
+        storage["py_src"] = editor.getValue()
+        # add delete_program 3/7, two parameters added, this will also affect save_program function on server.
+        req.send({'filename':doc["filename"].value, 'editor':editor.getValue(), 'overwrite':overwrite, 'delete1':delete1, 'delete2':delete2})
+        
+    # get program from server
+    def get_prog(ev):
+        # ajax can only read data from server
+        _name = '/brython_programs/'+doc["filename"].value
+        try:
+            editor.setValue(open(_name, encoding="utf-8").read())
+            doc["result"].html = doc["filename"].value+" loaded!"
+        except:
+            doc["result"].html = "can not get "+doc["filename"].value+"!"
+        editor.scrollToRow(0)
+        editor.gotoLine(0)
+        reset_theme()
+        
+    def get_radio(ev):
+        filename = window.getradio("filename")
+        # ajax can only read data from server
+        doc["filename"].value = filename
+        _name = '/brython_programs/'+filename
+        editor.setValue(open(_name, encoding="utf-8").read())
+        doc["result"].html = filename+" loaded!"
+        editor.scrollToRow(0)
+        editor.gotoLine(0)
+        reset_theme()
+        
+    # bindings
+    doc['run_js'].bind('click', window.run_js)
+    doc['set_debug'].bind('change',set_debug)
+    '''
+        adm1 = '''
+    doc['set_overwrite'].bind('change',set_overwrite)
+    # add delete_program 4/7, two associated binds added
+    doc['set_delete1'].bind('change',set_delete1)
+    doc['set_delete2'].bind('change',set_delete2)
+    '''
+        part2 = '''
+    # next functions are defined in editor.py
+    doc['show_js'].bind('click',editor.show_js)
+    doc['run'].bind('click',editor.run)
+    doc['show_console'].bind('click',editor.show_console)
+    # get_prog and get _radio (working)
+    doc['get_prog'].bind('click', get_prog)
+    doc['get_radio'].bind('click', get_radio)
+    # reset_the_src and clear_console (working)
+    doc['reset_the_src'].bind('click',editor.reset_the_src)
+    doc['clear_console'].bind('click',editor.clear_console)
+    # clear_canvas and clear_src
+    doc['clear_canvas'].bind('click',editor.clear_canvas)
+    doc['clear_src'].bind('click',editor.clear_src)
+    # only admin can save program to server
+    '''
+        adm2 = '''
+    doc['save_program'].bind('click',lambda ev:post('save_program'))
+    # add delete_program 5/7, delete_program button bind to execute delete_program on server.
+    doc['delete_program'].bind('click',lambda ev:post('delete_program'))
+    '''
+        # if load program through url
+        if filename != None:
+            load_program = '''
+    _name = '/brython_programs/'''+filename+''''
+    try:
+        editor.setValue(open(_name, encoding="utf-8").read())
+        doc["filename"].value = "'''+filename+'''"
+        doc["result"].html = "'''+filename+''' loaded!"
+    except:
+        doc["result"].html = "can not get '''+filename+'''!"
+    editor.scrollToRow(0)
+    editor.gotoLine(0)
+    reset_theme()
+    '''
+        else:
+            load_program = ""
+
+        part3 = '''
+    </script>
+    </head>
+    <body onload="brython({debug:1, cache:'version'})">
+    <table id="banner" cellpadding=0 cellspacing=0>
+    <tr id="banner_row">
+    <td style="width:80px"></td>
+    <td class="alnleft">
+    '''
+        part4 = '''
+    </td>
+    <td class="alnleft">
+                <button id="reset_the_src">reset the_src</button>
+                <button id="clear_src">clear src</button>
+                <button id="clear_console">clear console</button>
+                <button id="clear_canvas">clear canvas</button>
+                <button onclick="TogetherJS(this); return false;">Start TogetherJS</button>
+                <br />filename: <input id="filename">
+    '''
+        adm3 = '''
+                <button id="save_program">save program</button>
+                overwrite<input type="checkbox" id="set_overwrite">
+                <br /><!-- add delete_program button and two double checkboxs 6/7 -->
+                <button id="delete_program">delete program</button>
+                sure to delete1<input type="checkbox" id="set_delete1">
+                sure to delete2<input type="checkbox" id="set_delete2">
+    '''
+        part5 = '''
+                <div id="result">(empty)</div>
+                <button id="get_radio">load selected program</button>
+                <button onClick="window.location.reload()">reload page</button>
+                <button id="get_prog">get prog file</button>
+    </td>
+    </tr>
+    </table>
+    <!--
+    <div style="text-align:center">
+    <br>Brython version: <span id="version"></span>
+    </div>
+    -->
+    <div id="container">
+        <div id="left-div">
+        <div style="padding: 3px 3px 3px 3px;">
+        
+          <div style="float:center">
+            <button id="show_console">Console</button>
+            <button id="show_js">Javascript</button>
+          </div>
+        </div>
+        <div style="width:100%;height:100%;">
+        <textarea id="console"></textarea>
+        </div>
+    </div>
+
+    <div id="right-div">
+        <div style="padding: 3px 3px 3px 3px;">
+            <div style="float:left">
+            <button id="run">run</button>
+            <button id="run_js">run Javascript</button>
+            debug<input type="checkbox" id="set_debug" checked>
+            </div>
+        Theme: <select id="ace_theme">
+        <optgroup label="Bright">
+        <option value="ace/theme/chrome">Chrome</option>
+        <option value="ace/theme/crimson_editor">Crimson Editor</option>
+        <option value="ace/theme/eclipse">Eclipse</option>
+        <option value="ace/theme/github">GitHub</option>
+        </optgroup>
+        <optgroup label="Dark">
+        <option value="ace/theme/cobalt">Cobalt</option>
+        <option value="ace/theme/idle_fingers">idleFingers</option>
+        <option value="ace/theme/monokai">Monokai</option>
+        <option value="ace/theme/pastel_on_dark">Pastel on dark</option>
+        <option value="ace/theme/vibrant_ink">Vibrant Ink</option>
+        </optgroup>
+        </select> 
+        </div>
+          <div id="editor"></div>
+    </div>
+
+    <div style="float:left;margin-top:50px;">
+    <canvas id="plotarea" width="800" height="600"></canvas>
+    </div>
+    </body>
+    </html>
+    '''
+        if not self.isAdmin():
+            return part1+part2+load_program+part3+self.load_list(item_per_page, page, "brython", keyword)+part4+part5
+        else:
+            return part1+adm1+part2+adm2+load_program+part3+self.load_list(item_per_page, page, "brython", keyword)+part4+adm3+part5
+    @cherrypy.expose
     def calc(self, item_per_page=5, page=1, keyword=None, filename=None, *args, **kwargs):
         part1 = '''
     <!DOCTYPE html> 
@@ -2489,4 +2757,6 @@ if inOpenshift:
     application = cherrypy.Application(root, config = application_conf)
 else:
     # operate in localhost
+    #cherrypy.server.socket_port = 8080
+    #cherrypy.server.socket_host = '2001:288:6004:17::6666'
     cherrypy.quickstart(root, config = application_conf)
