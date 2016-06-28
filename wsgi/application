@@ -295,6 +295,8 @@ def editorhead():
     return '''
     <br />
 <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+<script src="/static/tinymce4/tinymce/plugins/sh4tinymce/plugin.min.js"></script>
+<link rel = "stylesheet" href = "/static/tinymce4/tinymce/plugins/sh4tinymce/style/style.css">
 <script>
 tinymce.init({
   selector: "textarea",
@@ -302,61 +304,24 @@ tinymce.init({
   element_format : "xhtml",
   language : "en",
   plugins: [
-    "advlist autolink autosave save link image lists charmap print preview hr anchor pagebreak spellchecker",
-    "searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking",
-    "table contextmenu directionality emoticons template textcolor paste textcolor colorpicker textpattern"
+    'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+    'searchreplace wordcount visualblocks visualchars code fullscreen',
+    'insertdatetime media nonbreaking save table contextmenu directionality',
+    'emoticons template paste textcolor colorpicker textpattern imagetools sh4tinymce'
   ],
-
-  toolbar1: "save bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
-  toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | insertdatetime preview | forecolor backcolor",
-  toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft",
-
-  menubar: false,
+  toolbar1: 'insertfile save undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+  toolbar2: 'link image | print preview media | forecolor backcolor emoticons | code sh4tinymce',
+  relative_urls: false,
   toolbar_items_size: 'small',
   file_picker_callback: function(callback, value, meta) {
         cmsFilePicker(callback, value, meta);
     },
-
-  style_formats: [{
-    title: 'Bold text',
-    inline: 'b'
-  }, {
-    title: 'Red text',
-    inline: 'span',
-    styles: {
-      color: '#ff0000'
-    }
-  }, {
-    title: 'Red header',
-    block: 'h1',
-    styles: {
-      color: '#ff0000'
-    }
-  }, {
-    title: 'Example 1',
-    inline: 'span',
-    classes: 'example1'
-  }, {
-    title: 'Example 2',
-    inline: 'span',
-    classes: 'example2'
-  }, {
-    title: 'Table styles'
-  }, {
-    title: 'Table row 1',
-    selector: 'tr',
-    classes: 'tablerow1'
-  }],
-
-  templates: [{
-    title: 'Test template 1',
-    content: 'Test 1'
-  }, {
-    title: 'Test template 2',
-    content: 'Test 2'
-  }],
+  templates: [
+    { title: 'Test template 1', content: 'Test 1' },
+    { title: 'Test template 2', content: 'Test 2' }
+  ],
   content_css: [
-    '//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+    '//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
     '//www.tinymce.com/css/codepen.min.css'
   ]
 });
